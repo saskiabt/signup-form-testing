@@ -1,0 +1,8 @@
+.form {
+  display: flex;
+  gap: 10px;
+}
+.form button {
+  padding: 10px;
+  border: 0px;
+}/*# sourceMappingURL=Form.css.map */
