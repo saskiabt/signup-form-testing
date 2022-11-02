@@ -1,23 +1,18 @@
-import React, { useState } from "react";
-import {
-  FormControl,
-  InputLabel,
-  TextField,
-  OutlinedInput,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import validator from "validator";
 import "./Form.css";
-import { getValue } from "@mui/system";
 
 function Form() {
   const [isPassword, setisPassword] = useState(true);
-  const [isValidEmail, setIsValidEmail] = useState(true);
-  const [isValidPassword, setIsValidPassword] = useState(true);
+  const [isValidEmail, setIsValidEmail] = useState(null);
+  const [isValidPassword, setIsValidPassword] = useState(null);
   const [newUserData, setNewUserData] = useState({
     email: "",
     username: "",
     password: "",
     confirmPassword: "",
   });
+  const [isMatchingPasswords, setIsMatchingPasswords] = useState(null);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -27,72 +22,103 @@ function Form() {
     });
   };
 
-  const checkIsValidEmail = () => {
-    if (newUserData.email.includes("@")) {
-      setIsValidEmail(true);
-    } else {
-      setIsValidEmail(false);
-    }
-  };
-
-  const checkIsValidPassword = () => {
-    if (newUserData.password.length > 5) {
-      setIsValidPassword(true);
-      return true;
-    } else {
-      setIsValidPassword(false);
-      return false;
-    }
+  const resetUserData = () => {
+    setNewUserData({
+      email: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
+    });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const email = checkIsValidEmail();
-    const password = checkIsValidPassword();
-    email && password ? console.alert("submitted!") : console.alert("Error");
+
+    if (isValidEmail && isValidPassword && isMatchingPasswords) {
+      console.log("logged in");
+      resetUserData();
+    } else {
+      console.log("error");
+    }
   };
 
+  useEffect(() => {
+    const checkIsValidEmail = () => {
+      if (validator.isEmail(newUserData.email) === true) {
+        setIsValidEmail(true);
+      } else {
+        setIsValidEmail(false);
+      }
+    };
+
+    const checkIsValidPassword = () => {
+      if (newUserData.password.length > 5) {
+        setIsValidPassword(true);
+      } else {
+        setIsValidPassword(false);
+      }
+    };
+
+    const matchPasswords = () => {
+      if (newUserData.password === newUserData.confirmPassword)
+        return setIsMatchingPasswords(true);
+      return setIsMatchingPasswords(false);
+    };
+
+    if (newUserData.email.length > 0) checkIsValidEmail();
+    if (newUserData.password.length > 0) checkIsValidPassword();
+    if (newUserData.confirmPassword.length > 0) matchPasswords();
+  }, [newUserData.confirmPassword, newUserData.email, newUserData.password]);
+
   return (
-    <div>
-      <FormControl className="form">
-        <InputLabel htmlFor="email">Email</InputLabel>
-        <OutlinedInput
-          id="email"
-          error={isValidEmail ? false : true}
-          placeholder="Email"
-          name="email"
-          onChange={handleChange}
-        />
-        <TextField
-          htmlFor="username"
-          required={true}
-          type="text"
-          id="username"
-          placeholder="Username"
-          name="username"
-          onChange={handleChange}
-        />
-        <TextField
-          htmlFor="password"
-          required={true}
-          type={isPassword ? "password" : "text"}
-          placeholder="Password"
-          name="password"
-          onChange={handleChange}
-          error={isValidPassword ? false : true}
-        />
-        <TextField
-          htmlFor="confirmPassword"
-          required={true}
-          type={isPassword ? "password" : "text"}
-          placeholder="Confirm Password"
-          name="confirmPassword"
-          onChange={handleChange}
-        />
-        <button type="submit" onClick={handleSubmit}>
-          Submit
-        </button>
-      </FormControl>
+    <div className="Form">
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="email">
+          {isValidEmail === false && (
+            <p className="helper-text">Please enter a valid email</p>
+          )}
+          <input
+            type="text"
+            onChange={handleChange}
+            name="email"
+            placeholder="Email"
+          ></input>
+        </label>
+        <label htmlFor="username">
+          <input
+            type="text"
+            onChange={handleChange}
+            name="username"
+            placeholder="Username"
+          ></input>
+        </label>
+        <label htmlFor="password">
+          {isValidPassword === false && (
+            <p className="helper-text">
+              Password must be longer than 5 characters
+            </p>
+          )}
+          <input
+            type={isPassword ? "password" : "text"}
+            onChange={handleChange}
+            name="password"
+            placeholder="Password"
+          ></input>
+        </label>
+        <label htmlFor="confirmPassword">
+          <input
+            type={isPassword ? "password" : "text"}
+            onChange={handleChange}
+            name="confirmPassword"
+            placeholder="Confirm password"
+          ></input>
+          {isMatchingPasswords === false && (
+            <p className="helper-text">Passwords do not match</p>
+          )}
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+      <div className="confirmation"></div>
     </div>
   );
 }

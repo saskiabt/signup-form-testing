@@ -1,8 +1,33 @@
-.form {
+.Form {
+  width: 70%;
+}
+
+form {
   display: flex;
   gap: 10px;
+  flex-direction: column;
 }
-.form button {
+form input {
+  border: 0.2px solid grey;
+  border-radius: 2px;
+  padding: 10px 20px 7px 10px;
+  width: 100%;
+}
+form button {
   padding: 10px;
   border: 0px;
+}
+form button:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+form button:active {
+  opacity: 20%;
+}
+form .helper-text {
+  font-size: 0.8em;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  color: rgb(164, 60, 60);
+  font-family: sans-serif;
 }/*# sourceMappingURL=Form.css.map */
